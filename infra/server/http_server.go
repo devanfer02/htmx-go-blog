@@ -1,0 +1,54 @@
+package server
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+
+	"github.com/devanfer02/go-todo/infra/env"
+)
+
+type Server interface {
+	MountMiddlewares()
+	MountControllers()
+	Start()
+}
+
+type httpServer struct {
+	app *gin.Engine
+	dbx *sqlx.DB
+}
+
+func NewHTTPServer(dbx *sqlx.DB) Server {
+	app := gin.Default()
+	
+	return &httpServer{
+		app: app,
+		dbx: dbx,
+	}
+}
+
+func (h *httpServer) MountMiddlewares() {
+	h.app.Static("/static", "./static")
+	h.app.LoadHTMLGlob("templates/*")
+}
+
+func (h *httpServer) MountControllers() {
+	h.app.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "Base", gin.H{
+			"title": "GO Todo App",
+		})
+	})
+}
+
+func (h *httpServer) Start() {
+	if env.AppEnv.AppPort[0] != ':' {
+		env.AppEnv.AppPort = ":" + env.AppEnv.AppPort
+	}
+
+	if err := h.app.Run(env.AppEnv.AppPort); err != nil {
+		log.Fatal("ERR: " + err.Error())
+	}
+}

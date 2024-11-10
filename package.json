@@ -1,5 +1,5 @@
 {
-  "name": "go-todo",
+  "name": "go-blog",
   "version": "1.0.0",
   "main": "vite.config.js",
   "type": "module",

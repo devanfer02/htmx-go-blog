@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/devanfer02/go-todo/infra/env"
+	"github.com/devanfer02/go-blog/infra/env"
 )
 
 type Server interface {
@@ -23,7 +23,7 @@ type httpServer struct {
 
 func NewHTTPServer(dbx *sqlx.DB) Server {
 	app := gin.Default()
-	
+
 	return &httpServer{
 		app: app,
 		dbx: dbx,

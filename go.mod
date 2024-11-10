@@ -1,4 +1,4 @@
-module github.com/devanfer02/go-todo
+module github.com/devanfer02/go-blog
 
 go 1.22.7
 

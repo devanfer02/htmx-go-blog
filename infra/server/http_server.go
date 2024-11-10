@@ -7,6 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/devanfer02/go-blog/app/controller"
+	"github.com/devanfer02/go-blog/app/repository"
+	"github.com/devanfer02/go-blog/app/service"
 	"github.com/devanfer02/go-blog/infra/env"
 )
 
@@ -41,6 +44,15 @@ func (h *httpServer) MountControllers() {
 			"title": "GO Todo App",
 		})
 	})
+
+	// repositories
+	blogRepo := repository.NewPgsqlBlogRepository(h.dbx)
+
+	// services
+	blogSvc := service.NewBlogService(blogRepo)
+
+	// controllers
+	controller.MountBlogRoutes(h.app, blogSvc)
 }
 
 func (h *httpServer) Start() {

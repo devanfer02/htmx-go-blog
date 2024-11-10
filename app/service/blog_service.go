@@ -32,17 +32,41 @@ func(s *blogService) GetAllBlogs() ([]domain.Blog, error) {
 }
 
 func(s *blogService) GetBlogByID(id int) (domain.Blog, error) {
-	return domain.Blog{}, nil 
+	blog, err := s.blogRepo.FetchBlogByID(id)
+	
+	if err != nil {
+		return domain.Blog{}, err 
+	}
+
+	return blog, nil 
 }
 
 func(s *blogService) CreateBlog(blog *domain.Blog) error  {
+	err := s.blogRepo.InsertBlog(blog)
+
+	if err != nil {
+		return err 
+	}
+
 	return nil 
 }
 
 func(s *blogService) UpdateBlog(blog *domain.Blog) error  {
+	err := s.blogRepo.UpdateBlog(blog)
+
+	if err != nil {
+		return err 
+	}
+
 	return nil 
 }
 
 func(s *blogService) DeleteBlog(blog *domain.Blog) error  {
+	err := s.blogRepo.DeleteBlog(blog)
+
+	if err != nil {
+		return err 
+	}
+
 	return nil 
 }

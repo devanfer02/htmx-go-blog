@@ -15,6 +15,14 @@ help:
 run:
 	go run ./app/cmd/main.go
 
+.PHONY: air
+air:
+	air -c .air.toml
+
+.PHONY: test
+test:
+	go test ./tests/...
+
 .PHONY: migrate-up
 migrate-up:
 	migrate -path ./data/db/migrations -database ${DB_URL} up

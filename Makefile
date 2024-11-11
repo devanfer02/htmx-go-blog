@@ -1,5 +1,7 @@
 # variables
-DB_URL = postgres://postgres:postgres@localhost:5432/htmxblog?sslmode=disable
+include .env
+export $(shell sed 's/=.*//' .env)
+DB_URL = "postgres://postgres:postgres@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable"
 
 .PHONY: help
 help:

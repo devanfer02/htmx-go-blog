@@ -2,7 +2,7 @@ package server
 
 import (
 	"log"
-	"net/http"
+	"text/template"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -34,17 +34,16 @@ func NewHTTPServer(dbx *sqlx.DB) Server {
 }
 
 func (h *httpServer) MountMiddlewares() {
+	h.app.SetFuncMap(template.FuncMap{
+		"arr": func(els ...any) []any {
+			return els 
+		}, 
+	})
 	h.app.Static("/static", "./static")
 	h.app.LoadHTMLGlob("templates/*")
 }
 
 func (h *httpServer) MountControllers() {
-	h.app.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "Base", gin.H{
-			"title": "GO Todo App",
-		})
-	})
-
 	// repositories
 	blogRepo := repository.NewPgsqlBlogRepository(h.dbx)
 

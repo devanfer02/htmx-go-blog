@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/devanfer02/go-blog/app/service"
 	"github.com/devanfer02/go-blog/domain"
+	"github.com/devanfer02/go-blog/pkg/constants"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,11 +18,58 @@ func MountBlogRoutes(app *gin.Engine, blogSvc service.BlogService) {
 	blogCtr := &BlogController{blogSvc: blogSvc}
 	blogR := app.Group("/api/blogs")
 
+	app.GET("/", blogCtr.Index)
+	app.GET("/blogs", blogCtr.ListBlogs)
+	app.GET("/blogs/:id", blogCtr.ShowBlog)
+	app.GET("/blogs/create", blogCtr.BlogForm)
+	app.GET("/blogs/edit/:id", blogCtr.EditBlog)
+
+	// api routes
 	blogR.GET("", blogCtr.FetchAllBlogs)
 	blogR.GET("/:id", blogCtr.FetchBlogByID)
 	blogR.POST("", blogCtr.CreateBlog)
 	blogR.PUT("/:id", blogCtr.UpdateBlog)
 	blogR.DELETE("/:id", blogCtr.DeleteBlog)
+}
+
+func (c *BlogController) Index(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "Base", gin.H{
+		"Title": "HTMX Go Blog",
+		"Content": "Home",
+		"Navs": constants.Navs,
+	})
+}
+
+func (c *BlogController) ListBlogs(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "Base", gin.H{
+		"Title": "HTMX Go Blog",
+		"Content": "Home",
+		"Navs": constants.Navs,
+	})
+}
+
+func (c *BlogController) ShowBlog(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "Base", gin.H{
+		"Title": "HTMX Go Blog",
+		"Content": "Home",
+		"Navs": constants.Navs,
+	})
+}
+
+func (c *BlogController) BlogForm(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "Base", gin.H{
+		"Title": "HTMX Go Blog",
+		"Content": "Home",
+		"Navs": constants.Navs,
+	})
+}
+
+func (c *BlogController) EditBlog(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "Base", gin.H{
+		"Title": "HTMX Go Blog",
+		"Content": "Home",
+		"Navs": constants.Navs,
+	})
 }
 
 func (c *BlogController) FetchAllBlogs(ctx *gin.Context) {

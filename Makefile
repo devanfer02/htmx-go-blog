@@ -11,7 +11,7 @@ help:
 
 .PHONY: run
 run:
-	go run ./cmd/go-blog/
+	go run ./app/cmd/main.go
 
 .PHONY: migrate-up
 migrate-up:

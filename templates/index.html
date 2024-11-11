@@ -6,10 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/static/js/htmx.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/static/styles/style.css">
-    <title>HTMX GO TODO</title>
+    <title>{{ .Title }}</title>
 </head>
 <body>
-    <p class="text-red-600">Hello World</p>
+    {{ template "Navbar" (arr .Navs )}}
+    <main class="px-5 py-10">
+        {{ if eq .Content "Home" }}
+            {{ template "Home" }}
+        {{ else }}
+            <div>Salah konten bang</div>
+        {{ end }}
+        
+    </main>
 </body>
 </html>
 {{ end }}

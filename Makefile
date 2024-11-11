@@ -6,10 +6,12 @@ DB_URL = "postgres://postgres:postgres@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=
 .PHONY: help
 help:
 	@echo "Choose a command:"
-	@echo "  make run            - Run the Go application"
-	@echo "  make migrate-up     - Apply all migrations"
-	@echo "  make migrate-down   - Rollback all migrations"
-	@echo "  make create-migration name=<name> - Create a new migration file"
+	@echo "  make run            	- Run the Go application"
+	@echo "  make air            	- Run the Go application with live reloading"
+	@echo "  make test           	- Run Go unit tests defined in ./tests"
+	@echo "  make migrate-up     	- Apply all migrations"
+	@echo "  make migrate-down   	- Rollback all migrations"
+	@echo "  make create-migration name=<name> 	- Create a new migration file"
 
 .PHONY: run
 run:

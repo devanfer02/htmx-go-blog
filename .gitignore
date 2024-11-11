@@ -2,6 +2,7 @@
 node_modules
 static/*
 !static/.gitkeep
+!static/assets
 .VSCodeCounter
 tmp
 bin

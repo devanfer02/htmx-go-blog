@@ -42,8 +42,8 @@ func (c *BlogController) Index(ctx *gin.Context) {
 
 func (c *BlogController) ListBlogs(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog",
-		"Content": "Home",
+		"Title": "HTMX Go Blog's Blogs",
+		"Content": "ListBlogs",
 		"Navs": constants.Navs,
 	})
 }
@@ -59,7 +59,7 @@ func (c *BlogController) ShowBlog(ctx *gin.Context) {
 func (c *BlogController) BlogForm(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "Base", gin.H{
 		"Title": "HTMX Go Blog",
-		"Content": "Home",
+		"Content": "CreateBlog",
 		"Navs": constants.Navs,
 	})
 }

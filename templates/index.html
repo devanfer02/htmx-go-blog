@@ -4,20 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <script src="/static/js/htmx.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="/static/styles/style.css">
     <title>{{ .Title }}</title>
 </head>
 <body>
-    {{ template "Navbar" (arr .Navs )}}
-    <main class="px-5 py-10">
-        {{ if eq .Content "Home" }}
-            {{ template "Home" }}
-        {{ else }}
-            <div>Salah konten bang</div>
-        {{ end }}
-        
-    </main>
+    {{ template "Navbar" (arr .Navs )}}    
+    <div class="flex ">
+        <div class="h-[5px] w-1/4 bg-blue-500"></div>
+        <div class="h-[5px] w-1/4 bg-red-500"></div>
+        <div class="h-[5px] w-1/4 bg-yellow-300"></div>
+        <div class="h-[5px] w-1/4 bg-green-500"></div>
+    </div>    
+    {{ if eq .Content "Home" }}
+        {{ template "Home" }}
+    {{ else if eq .Content "ListBlogs" }}
+        {{ template "ListBlogs" }}
+    {{ else if eq .Content "CreateBlog" }}
+        {{ template "CreateBlog" }}
+    {{ else if eq .Content "UpdateBlog" }}
+        {{ template "CreateBlog" }}
+    {{ else }}
+        <div>Salah konten bang</div>
+    {{ end }}
+
+    {{ template "Footer" }}
 </body>
 </html>
 {{ end }}

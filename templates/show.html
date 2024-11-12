@@ -9,6 +9,7 @@
 <div class="py-10 px-20">
     <div class="bg-green-500 min-h-[500px] mb-5">
     </div>
+    {{ template "Alert" dict "ResQuery" .ResQuery }}
     <h1 class="text-5xl font-bold mb-5">{{ .Blog.Title }}</h1>
     <p class="text-xl text-justify mb-5">
         {{ .Blog.Content }}
@@ -17,7 +18,7 @@
         <a class="w-1/2 bg-blue-500 text-center py-2 text-white rounded-lg" href="/blogs/edit/{{ .Blog.ID }}">
             Edit 
         </a>
-        <form class="w-1/2 bg-red-500 text-center py-2 text-white cursor-pointer rounded-lg" hx-delete="/blogs/{{ .Blog.ID }}" hx-target="body" hx-swap="outerHMTL" hx-push-url="/blogs">
+        <form class="w-1/2 bg-red-500 text-center py-2 text-white cursor-pointer rounded-lg" hx-delete="/blogs/{{ .Blog.ID }}" hx-target="body" hx-swap="outerHMTL" hx-push-url="true">
             <button class="w-full">Delete</button>
         </form>
     </div>

@@ -22,13 +22,13 @@
         {{ if eq .Content "Home" }}
             {{ template "Home" }}
         {{ else if eq .Content "ListBlogs" }}
-            {{ template "ListBlogs" dict "Blogs" .Blogs }}
+            {{ template "ListBlogs" dict "Blogs" .Blogs "ResQuery" .ResQuery }}
         {{ else if eq .Content "CreateBlog" }}
             {{ template "CreateBlog" }}
         {{ else if eq .Content "EditBlog" }}
             {{ template "EditBlog" dict "Blog" .Blog }}
         {{ else if eq .Content "ShowBlog" }}
-            {{ template "ShowBlog" dict "Blog" .Blog }}
+            {{ template "ShowBlog" dict "Blog" .Blog "ResQuery" .ResQuery }}
         {{ else }}
             <div>Salah konten bang</div>
         {{ end }}

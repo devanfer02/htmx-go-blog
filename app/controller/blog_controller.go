@@ -8,6 +8,7 @@ import (
 	"github.com/devanfer02/go-blog/app/service"
 	"github.com/devanfer02/go-blog/domain"
 	"github.com/devanfer02/go-blog/pkg/constants"
+	// "github.com/devanfer02/go-blog/pkg/helpers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +28,7 @@ func MountBlogRoutes(app *gin.Engine, blogSvc service.BlogService) {
 	app.GET("/blogs/edit/:id", blogCtr.EditBlog)
 	app.POST("/blogs", blogCtr.CreateBlog)
 	app.PUT("/blogs/:id", blogCtr.UpdateBlog)
-	
+
 	app.DELETE("/blogs/:id", blogCtr.DeleteBlog)
 }
 
@@ -86,20 +87,22 @@ func (c *BlogController) EditBlog(ctx *gin.Context) {
 
 func (c *BlogController) ListBlogs(ctx *gin.Context) {
 	var (
-		code    int    = 500
-		message string = "failed to fetch all blogs"
-		blogs   []domain.Blog
-		err     error = nil
+		code     int    = 500
+		message  string = "failed to fetch all blogs"
+		blogs    []domain.Blog
+		err      error  = nil
+		resQuery string = ctx.Query("result")
 	)
 
 	sendResp := func() {
 		ctx.HTML(code, "Base", gin.H{
-			"Title":   "List Blogs",
-			"Content": "ListBlogs",
-			"Navs":    constants.Navs,
-			"Err":     err,
-			"Message": message,
-			"Blogs":   blogs,
+			"Title":    "List Blogs",
+			"Content":  "ListBlogs",
+			"Navs":     constants.Navs,
+			"Err":      err,
+			"Message":  message,
+			"ResQuery": resQuery,
+			"Blogs":    blogs,
 		})
 	}
 
@@ -121,18 +124,20 @@ func (c *BlogController) ShowBlog(ctx *gin.Context) {
 		blog    domain.Blog
 		err     error = nil
 
-		idParam = ctx.Param("id")
-		id      int
+		idParam  = ctx.Param("id")
+		id       int
+		resQuery string = ctx.Query("result")
 	)
 
 	sendResp := func() {
 		ctx.HTML(http.StatusOK, "Base", gin.H{
-			"Title":   "HTMX Go Blog",
-			"Content": "ShowBlog",
-			"Navs":    constants.Navs,
-			"Err":     err,
-			"Blog":    blog,
-			"Message": message,
+			"Title":    "HTMX Go Blog",
+			"Content":  "ShowBlog",
+			"Navs":     constants.Navs,
+			"Err":      err,
+			"Blog":     blog,
+			"ResQuery": resQuery,
+			"Message":  message,
 		})
 	}
 
@@ -191,7 +196,8 @@ func (c *BlogController) UpdateBlog(ctx *gin.Context) {
 	)
 
 	sendResp := func() {
-		ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id, message))
+		ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id,message))
+		// ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id, message))
 	}
 
 	defer sendResp()
@@ -220,14 +226,14 @@ func (c *BlogController) DeleteBlog(ctx *gin.Context) {
 	var (
 		code    int    = 303
 		message string = "failed to delete blog"
-		err     error = nil
+		err     error  = nil
 
 		idParam = ctx.Param("id")
 		id      int
 	)
 
 	sendResp := func() {
-		ctx.Redirect(code, fmt.Sprintf("/blogs?result=%s", id, message))
+		ctx.Redirect(code, fmt.Sprintf("/blogs?result=%s", message))
 	}
 
 	defer sendResp()

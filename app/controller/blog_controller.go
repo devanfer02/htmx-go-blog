@@ -3,11 +3,15 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/devanfer02/go-blog/app/service"
 	"github.com/devanfer02/go-blog/domain"
 	"github.com/devanfer02/go-blog/pkg/constants"
+	"github.com/devanfer02/go-blog/pkg/helpers"
+
 	// "github.com/devanfer02/go-blog/pkg/helpers"
 	"github.com/gin-gonic/gin"
 )
@@ -175,6 +179,14 @@ func (c *BlogController) CreateBlog(ctx *gin.Context) {
 		return
 	}
 
+	if !helpers.IsImageFile(blog.Image) {
+		return 
+	}
+
+	blog.ImageLink = "/static/assets/storage/" + time.Now().Format("02-01-2006") + "-" + blog.Image.Filename 
+
+	ctx.SaveUploadedFile(blog.Image, "."+blog.ImageLink)
+
 	err = c.blogSvc.CreateBlog(&blog)
 
 	if err != nil {
@@ -191,13 +203,13 @@ func (c *BlogController) UpdateBlog(ctx *gin.Context) {
 		blog    domain.Blog
 		err     error = nil
 
-		idParam = ctx.Param("id")
-		id      int
+		idParam      = ctx.Param("id")
+		id           int
+		newImageLink string = ""
 	)
 
 	sendResp := func() {
-		ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id,message))
-		// ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id, message))
+		ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id, message))
 	}
 
 	defer sendResp()
@@ -209,6 +221,21 @@ func (c *BlogController) UpdateBlog(ctx *gin.Context) {
 
 	if err := ctx.ShouldBind(&blog); err != nil {
 		return
+	}
+
+	if blog.Image != nil {
+		if !helpers.IsImageFile(blog.Image) {
+			return 
+		}
+		
+		newImageLink = "/static/assets/storage/" + time.Now().Format("02-01-2006") + "-" + blog.Image.Filename 
+		ctx.SaveUploadedFile(blog.Image, "."+newImageLink)
+
+		if blog.ImageLink != "" {
+			_ = os.Remove("." + blog.ImageLink)
+		}
+
+		blog.ImageLink = newImageLink
 	}
 
 	blog.ID = id
@@ -228,8 +255,9 @@ func (c *BlogController) DeleteBlog(ctx *gin.Context) {
 		message string = "failed to delete blog"
 		err     error  = nil
 
-		idParam = ctx.Param("id")
-		id      int
+		idParam   = ctx.Param("id")
+		id        int
+		imageLink string
 	)
 
 	sendResp := func() {
@@ -241,6 +269,12 @@ func (c *BlogController) DeleteBlog(ctx *gin.Context) {
 
 	if err != nil {
 		return
+	}
+
+	imageLink = ctx.PostForm("image_link")
+
+	if imageLink != "" {
+		_ = os.Remove("." + imageLink)
 	}
 
 	err = c.blogSvc.DeleteBlog(id)

@@ -93,7 +93,7 @@ func (r *pgsqlBlogRepository) InsertBlog(blog *domain.Blog) error {
 	query = sq.
 		Insert(TABLE_NAME). 
 		Columns("title", "image_link", "content"). 
-		Values(blog.Title, "", blog.Content)
+		Values(blog.Title, blog.ImageLink, blog.Content)
 
 	sql, args, err = query.PlaceholderFormat(sq.Dollar).ToSql()
 
@@ -121,7 +121,7 @@ func (r *pgsqlBlogRepository) UpdateBlog(blog *domain.Blog) error {
 	query = sq.
 		Update(TABLE_NAME). 
 		Set("title", blog.Title). 
-		Set("image_link", "").
+		Set("image_link", blog.ImageLink).
 		Set("content", blog.Content). 
 		Where("id = ?", blog.ID)
 

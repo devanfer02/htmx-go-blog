@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -14,85 +15,91 @@ type BlogController struct {
 	blogSvc service.BlogService
 }
 
+// todo: change some of the api routes to give html response
+
 func MountBlogRoutes(app *gin.Engine, blogSvc service.BlogService) {
 	blogCtr := &BlogController{blogSvc: blogSvc}
-	blogR := app.Group("/api/blogs")
 
 	app.GET("/", blogCtr.Index)
 	app.GET("/blogs", blogCtr.ListBlogs)
 	app.GET("/blogs/:id", blogCtr.ShowBlog)
 	app.GET("/blogs/create", blogCtr.BlogForm)
 	app.GET("/blogs/edit/:id", blogCtr.EditBlog)
-
-	// api routes
-	blogR.GET("", blogCtr.FetchAllBlogs)
-	blogR.GET("/:id", blogCtr.FetchBlogByID)
-	blogR.POST("", blogCtr.CreateBlog)
-	blogR.PUT("/:id", blogCtr.UpdateBlog)
-	blogR.DELETE("/:id", blogCtr.DeleteBlog)
+	app.POST("/blogs", blogCtr.CreateBlog)
+	app.PUT("/blogs/:id", blogCtr.UpdateBlog)
+	
+	app.DELETE("/blogs/:id", blogCtr.DeleteBlog)
 }
 
 func (c *BlogController) Index(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog",
+		"Title":   "HTMX Go Blog",
 		"Content": "Home",
-		"Navs": constants.Navs,
-	})
-}
-
-func (c *BlogController) ListBlogs(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog's Blogs",
-		"Content": "ListBlogs",
-		"Navs": constants.Navs,
-	})
-}
-
-func (c *BlogController) ShowBlog(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog",
-		"Content": "Home",
-		"Navs": constants.Navs,
+		"Navs":    constants.Navs,
 	})
 }
 
 func (c *BlogController) BlogForm(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog",
+		"Title":   "HTMX Go Blog",
 		"Content": "CreateBlog",
-		"Navs": constants.Navs,
+		"Navs":    constants.Navs,
 	})
 }
 
 func (c *BlogController) EditBlog(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "Base", gin.H{
-		"Title": "HTMX Go Blog",
-		"Content": "Home",
-		"Navs": constants.Navs,
-	})
+	var (
+		message string = "failed to fetch blog"
+		blog    domain.Blog
+		err     error = nil
+
+		idParam = ctx.Param("id")
+		id      int
+	)
+
+	sendResp := func() {
+		ctx.HTML(http.StatusOK, "Base", gin.H{
+			"Title":   "HTMX Go Blog",
+			"Content": "EditBlog",
+			"Navs":    constants.Navs,
+			"Err":     err,
+			"Blog":    blog,
+			"Message": message,
+		})
+	}
+
+	defer sendResp()
+	id, err = strconv.Atoi(idParam)
+
+	if err != nil {
+		return
+	}
+
+	blog, err = c.blogSvc.GetBlogByID(id)
+
+	if err != nil {
+		return
+	}
+
+	message = "successfully fetch blog"
 }
 
-func (c *BlogController) FetchAllBlogs(ctx *gin.Context) {
+func (c *BlogController) ListBlogs(ctx *gin.Context) {
 	var (
 		code    int    = 500
-		status  string = "fail"
 		message string = "failed to fetch all blogs"
 		blogs   []domain.Blog
 		err     error = nil
 	)
 
 	sendResp := func() {
-		ctx.JSON(code, gin.H{
-			"code":    code,
-			"status":  status,
-			"message": message,
-			"data":    blogs,
-			"err": func() string {
-				if err != nil {
-					return err.Error()
-				}
-				return ""
-			}(),
+		ctx.HTML(code, "Base", gin.H{
+			"Title":   "List Blogs",
+			"Content": "ListBlogs",
+			"Navs":    constants.Navs,
+			"Err":     err,
+			"Message": message,
+			"Blogs":   blogs,
 		})
 	}
 
@@ -105,14 +112,11 @@ func (c *BlogController) FetchAllBlogs(ctx *gin.Context) {
 		return
 	}
 
-	status = "success"
 	message = "successfully fetch all blogs"
 }
 
-func (c *BlogController) FetchBlogByID(ctx *gin.Context) {
+func (c *BlogController) ShowBlog(ctx *gin.Context) {
 	var (
-		code    int    = 500
-		status  string = "fail"
 		message string = "failed to fetch blog"
 		blog    domain.Blog
 		err     error = nil
@@ -122,17 +126,13 @@ func (c *BlogController) FetchBlogByID(ctx *gin.Context) {
 	)
 
 	sendResp := func() {
-		ctx.JSON(code, gin.H{
-			"code":    code,
-			"status":  status,
-			"message": message,
-			"data":    blog,
-			"err": func() string {
-				if err != nil {
-					return err.Error()
-				}
-				return ""
-			}(),
+		ctx.HTML(http.StatusOK, "Base", gin.H{
+			"Title":   "HTMX Go Blog",
+			"Content": "ShowBlog",
+			"Navs":    constants.Navs,
+			"Err":     err,
+			"Blog":    blog,
+			"Message": message,
 		})
 	}
 
@@ -140,66 +140,48 @@ func (c *BlogController) FetchBlogByID(ctx *gin.Context) {
 	id, err = strconv.Atoi(idParam)
 
 	if err != nil {
-		code = 400 
-		return 
+		return
 	}
 
 	blog, err = c.blogSvc.GetBlogByID(id)
-	code = domain.GetCode(err)
 
 	if err != nil {
 		return
 	}
 
-	status = "success"
 	message = "successfully fetch blog"
 }
 
 func (c *BlogController) CreateBlog(ctx *gin.Context) {
 	var (
-		code    int    = 500
-		status  string = "fail"
+		code    int    = 303
 		message string = "failed to create blog"
 		blog    domain.Blog
 		err     error = nil
 	)
 
 	sendResp := func() {
-		ctx.JSON(code, gin.H{
-			"code":    code,
-			"status":  status,
-			"message": message,
-			"err": func() string {
-				if err != nil {
-					return err.Error()
-				}
-				return ""
-			}(),
-		})
+		ctx.Redirect(code, fmt.Sprintf("/blogs?result=%s", message))
 	}
 
 	defer sendResp()
-	
-	if err := ctx.ShouldBindJSON(&blog); err != nil {
-		code = 400
-		return 
+
+	if err = ctx.ShouldBind(&blog); err != nil {
+		return
 	}
 
 	err = c.blogSvc.CreateBlog(&blog)
-	code = domain.GetCode(err)
 
 	if err != nil {
 		return
 	}
 
-	status = "success"
-	message = "successfully fetch blog"
+	message = "successfully create blog"
 }
 
 func (c *BlogController) UpdateBlog(ctx *gin.Context) {
 	var (
-		code    int    = 500
-		status  string = "fail"
+		code    int    = 303
 		message string = "failed to update blog"
 		blog    domain.Blog
 		err     error = nil
@@ -209,51 +191,35 @@ func (c *BlogController) UpdateBlog(ctx *gin.Context) {
 	)
 
 	sendResp := func() {
-		ctx.JSON(code, gin.H{
-			"code":    code,
-			"status":  status,
-			"message": message,
-			"err": func() string {
-				if err != nil {
-					return err.Error()
-				}
-				return ""
-			}(),
-		})
+		ctx.Redirect(code, fmt.Sprintf("/blogs/%v?result=%s", id, message))
 	}
 
 	defer sendResp()
 	id, err = strconv.Atoi(idParam)
 
 	if err != nil {
-		code = 400 
-		return 
+		return
 	}
 
-	if err := ctx.ShouldBindJSON(&blog); err != nil {
-		code = 400
-		return 
+	if err := ctx.ShouldBind(&blog); err != nil {
+		return
 	}
 
-	blog.ID = id 
+	blog.ID = id
 
 	err = c.blogSvc.UpdateBlog(&blog)
-	code = domain.GetCode(err)
 
 	if err != nil {
 		return
 	}
 
-	status = "success"
 	message = "successfully update blog"
 }
 
 func (c *BlogController) DeleteBlog(ctx *gin.Context) {
 	var (
-		code    int    = 500
-		status  string = "fail"
+		code    int    = 303
 		message string = "failed to delete blog"
-		blog    domain.Blog
 		err     error = nil
 
 		idParam = ctx.Param("id")
@@ -261,41 +227,21 @@ func (c *BlogController) DeleteBlog(ctx *gin.Context) {
 	)
 
 	sendResp := func() {
-		ctx.JSON(code, gin.H{
-			"code":    code,
-			"status":  status,
-			"message": message,
-			"err": func() string {
-				if err != nil {
-					return err.Error()
-				}
-				return ""
-			}(),
-		})
+		ctx.Redirect(code, fmt.Sprintf("/blogs?result=%s", id, message))
 	}
 
 	defer sendResp()
 	id, err = strconv.Atoi(idParam)
 
 	if err != nil {
-		code = 400 
-		return 
+		return
 	}
 
-	if err := ctx.ShouldBindJSON(&blog); err != nil {
-		code = 400
-		return 
-	}
-
-	blog.ID = id 
-
-	err = c.blogSvc.DeleteBlog(&blog)
-	code = domain.GetCode(err)
+	err = c.blogSvc.DeleteBlog(id)
 
 	if err != nil {
 		return
 	}
 
-	status = "success"
 	message = "successfully delete blog"
 }

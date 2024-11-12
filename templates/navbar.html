@@ -7,7 +7,7 @@
         
     </h1>
     <ul class="pl-5 font-semibold flex gap-x-5">
-        {{ range index . 0 }}
+        {{ range .Navs }}
         <li class="hover:bg-white hover:text-red-500 ease-in-out duration-300 rounded-lg px-2 py-1 text-green-500">
             <a href="{{ .path }}">
                 {{ .title }}

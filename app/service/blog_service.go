@@ -10,7 +10,7 @@ type BlogService interface {
 	GetBlogByID(id int) (domain.Blog, error)
 	CreateBlog(blog *domain.Blog) error 
 	UpdateBlog(blog *domain.Blog) error 
-	DeleteBlog(blog *domain.Blog) error 
+	DeleteBlog(id int) error 
 }
 
 type blogService struct {
@@ -61,8 +61,8 @@ func(s *blogService) UpdateBlog(blog *domain.Blog) error  {
 	return nil 
 }
 
-func(s *blogService) DeleteBlog(blog *domain.Blog) error  {
-	err := s.blogRepo.DeleteBlog(blog)
+func(s *blogService) DeleteBlog(id int) error  {
+	err := s.blogRepo.DeleteBlog(id)
 
 	if err != nil {
 		return err 

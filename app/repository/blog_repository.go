@@ -14,7 +14,7 @@ type BlogRepository interface {
 	FetchBlogByID(id int) (domain.Blog, error)
 	InsertBlog(blog *domain.Blog) error
 	UpdateBlog(blog *domain.Blog) error
-	DeleteBlog(blog *domain.Blog) error
+	DeleteBlog(id int) error
 }
 
 type pgsqlBlogRepository struct {
@@ -92,8 +92,8 @@ func (r *pgsqlBlogRepository) InsertBlog(blog *domain.Blog) error {
 
 	query = sq.
 		Insert(TABLE_NAME). 
-		Columns("title", "slug", "content"). 
-		Values(blog.Title, blog.Slug, blog.Content)
+		Columns("title", "image_link", "content"). 
+		Values(blog.Title, "", blog.Content)
 
 	sql, args, err = query.PlaceholderFormat(sq.Dollar).ToSql()
 
@@ -121,7 +121,7 @@ func (r *pgsqlBlogRepository) UpdateBlog(blog *domain.Blog) error {
 	query = sq.
 		Update(TABLE_NAME). 
 		Set("title", blog.Title). 
-		Set("slug", blog.Slug).
+		Set("image_link", "").
 		Set("content", blog.Content). 
 		Where("id = ?", blog.ID)
 
@@ -146,7 +146,7 @@ func (r *pgsqlBlogRepository) UpdateBlog(blog *domain.Blog) error {
 	return nil
 }
 
-func (r *pgsqlBlogRepository) DeleteBlog(blog *domain.Blog) error {
+func (r *pgsqlBlogRepository) DeleteBlog(id int) error {
 	var (
 		query sq.DeleteBuilder
 		sql string 
@@ -156,7 +156,7 @@ func (r *pgsqlBlogRepository) DeleteBlog(blog *domain.Blog) error {
 
 	query = sq.
 		Delete(TABLE_NAME). 
-		Where("id = ?", blog.ID)
+		Where("id = ?", id)
 
 	sql, args, err = query.PlaceholderFormat(sq.Dollar).ToSql()
 

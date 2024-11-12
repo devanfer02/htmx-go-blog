@@ -3,10 +3,10 @@ package domain
 import "time"
 
 type Blog struct {
-	ID        int       `db:"id"`
-	Title     string    `db:"title"`
-	Slug      string    `db:"slug"`
-	Content   string    `db:"content"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	ID        int       `db:"id" form:"id"`
+	Title     string    `db:"title" form:"title"`
+	ImageLink string 	`db:"image_link" form:"image"`
+	Content   string    `db:"content" form:"content"`
+	CreatedAt time.Time `db:"created_at" form:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" form:"updated_at"`
 }

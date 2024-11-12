@@ -1,3 +1,26 @@
 {{ define "ShowBlog" }}
-
+{{ if eq .Blog.Title "" }}
+<div class="py-10 px-20 flex h-screen justify-center items-center self-center w-full">
+    <h1 class="font-bold text-4xl">
+        <span class="text-red-500">Blog </span><span class="text-yellow-300">Not</span> <span class="text-green-500">Found</span>
+    </h1>
+</div>
+{{ else }}
+<div class="py-10 px-20">
+    <div class="bg-green-500 min-h-[500px] mb-5">
+    </div>
+    <h1 class="text-5xl font-bold mb-5">{{ .Blog.Title }}</h1>
+    <p class="text-xl text-justify mb-5">
+        {{ .Blog.Content }}
+    </p>
+    <div class="flex gap-x-10">
+        <a class="w-1/2 bg-blue-500 text-center py-2 text-white rounded-lg" href="/blogs/edit/{{ .Blog.ID }}">
+            Edit 
+        </a>
+        <form class="w-1/2 bg-red-500 text-center py-2 text-white cursor-pointer rounded-lg" hx-delete="/blogs/{{ .Blog.ID }}" hx-target="body" hx-swap="outerHMTL" hx-push-url="/blogs">
+            <button class="w-full">Delete</button>
+        </form>
+    </div>
+</div>
+{{ end }}
 {{ end }}

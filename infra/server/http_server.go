@@ -2,8 +2,8 @@ package server
 
 import (
 	"log"
-	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 
@@ -34,11 +34,7 @@ func NewHTTPServer(dbx *sqlx.DB) Server {
 }
 
 func (h *httpServer) MountMiddlewares() {
-	h.app.SetFuncMap(template.FuncMap{
-		"arr": func(els ...any) []any {
-			return els 
-		}, 
-	})
+	h.app.SetFuncMap(sprig.FuncMap())
 	h.app.Static("/static", "./static")
 	h.app.LoadHTMLGlob("templates/*")
 }

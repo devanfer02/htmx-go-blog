@@ -11,24 +11,28 @@
     <title>{{ .Title }}</title>
 </head>
 <body>
-    {{ template "Navbar" (arr .Navs )}}    
+    {{ template "Navbar" dict "Navs" .Navs }}    
     <div class="flex ">
         <div class="h-[5px] w-1/4 bg-blue-500"></div>
         <div class="h-[5px] w-1/4 bg-red-500"></div>
         <div class="h-[5px] w-1/4 bg-yellow-300"></div>
         <div class="h-[5px] w-1/4 bg-green-500"></div>
     </div>    
-    {{ if eq .Content "Home" }}
-        {{ template "Home" }}
-    {{ else if eq .Content "ListBlogs" }}
-        {{ template "ListBlogs" }}
-    {{ else if eq .Content "CreateBlog" }}
-        {{ template "CreateBlog" }}
-    {{ else if eq .Content "UpdateBlog" }}
-        {{ template "CreateBlog" }}
-    {{ else }}
-        <div>Salah konten bang</div>
-    {{ end }}
+    <div class="min-h-screen">
+        {{ if eq .Content "Home" }}
+            {{ template "Home" }}
+        {{ else if eq .Content "ListBlogs" }}
+            {{ template "ListBlogs" dict "Blogs" .Blogs }}
+        {{ else if eq .Content "CreateBlog" }}
+            {{ template "CreateBlog" }}
+        {{ else if eq .Content "EditBlog" }}
+            {{ template "EditBlog" dict "Blog" .Blog }}
+        {{ else if eq .Content "ShowBlog" }}
+            {{ template "ShowBlog" dict "Blog" .Blog }}
+        {{ else }}
+            <div>Salah konten bang</div>
+        {{ end }}
+    </div>
 
     {{ template "Footer" }}
 </body>

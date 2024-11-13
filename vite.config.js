@@ -5,9 +5,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: [resolve(__dirname, "resources/htmx.js")],
-            formats: ["es"],
-            name: "[name]",
-            fileName: "[name]",
+            formats: ["es"],            
+            fileName: "htmx",
         },
         outDir: "static/js",
         emptyOutDir: false
